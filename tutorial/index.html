@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Code Snippet: Password-Manager Project</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.0/themes/prism.min.css"/>
+	<link rel="stylesheet" href="shades-of-purple.css"/>
+</head>
+<body>
+	<style>
+		html{
+			scroll-behavior: smooth;
+			scrollbar-color: #1e1e3f #ffffff;
+		}
+	</style>
+	<div class="container py-5">
+
+		<h1 class="text-center">Password-Manager Project: Fetch Credentials and Delete</h1>
+		<hr />
+
+		<br/>
+		<h2>Getting Started:</h2>
+		<p>
+			For this project, we need to third-party libraries; <small class="badge badge-info">react-router-dom</small> for routing, and <small class="badge badge-info">react-bootstrap</small> to use bootstrap with react. 
+			To install them we open our terminal and input the following command: &nbsp; &nbsp;
+			<code class="bg-light">
+				npm i react-router-dom react-bootstrap
+			</code>
+			
+			<br/>
+			This will fetch the packages from the <a href="http://npmjs.com" target="_blank" rel="noopener noreferrer">npm registry</a> and install them in our application.
+		</p>
+
+
+		<div class="text-center mx-auto my-3">
+			<h4 class="text-left">The image below shows our project's folder structure 👇🏻</h4>
+			<br/>
+			<img src="folderStructure.png" alt="folder structure" />
+		</div>
+
+
+		<h3>Now to configure our routes, we need to update our <span class="badge badge-primary">App.js</span> file.</h3>
+		<pre>
+			<code class="language-javascript">
+				import React from 'react';
+				import { BrowserRouter, Switch, Route } from 'react-router-dom';
+
+				import './App.css';
+				import './bootstrap.css';
+
+				import SiteNav from './components/SiteNav';
+				import Index from './Pages/Index/Index';
+				import NewCredential from './Pages/New/NewCredential';
+				import EditCredential from './Pages/Edit/EditCredential';
+
+
+				function App() {
+					return (
+						&lt;BrowserRouter&gt;
+							&lt;SiteNav /&gt;
+							&lt;Switch&gt;
+								&lt;Route exact path="/" component={Index} /&gt;
+								&lt;Route exact path="/new-credential" component={NewCredential} /&gt;
+								&lt;Route exact path="/edit/:id" component={EditCredential} /&gt;
+							&lt;/Switch&gt;
+						&lt;/BrowserRouter&gt;
+					);
+				}
+
+				export default App;
+			</code>
+		</pre>
+
+		<br/>
+		<h3>Now let's create our site's navbar <span class="badge badge-primary">/components/SiteNav.jsx</span> 👇🏻</h3>
+		<pre>
+			<code class="language-javascript">
+				import React from 'react';
+				import { Navbar, Nav } from 'react-bootstrap';
+				import { Link } from 'react-router-dom';
+
+				export default function SiteNav() {
+					return (
+						&lt;Navbar bg="dark" variant="dark"&gt;
+							&lt;Navbar.Brand href="#"&gt;
+								&lt;im&gt;
+									alt=""
+									src="/logo512.png"
+									width="30"
+									height="30"
+									className="d-inline-block align-top"
+								/&gt;{' '}
+								Password Manager
+							&lt;/Navbar.Brand&gt;
+							&lt;Nav className="ml-auto"&gt;
+								&lt;Link to="/" className="btn btn-info shadow"&gt;Home&lt;/Link&gt; &nbsp&gt;
+								&lt;Link to="/new-credential" className="btn btn-info shadow"&gt;New Credentials&lt;/Link&gt;
+							&lt;/Nav&gt;
+						&lt;/Navbar&gt;
+					);
+				}
+
+			</code>
+		</pre>
+
+		<br/>
+		<h3>Now let's get our Loader component -> <span class="badge badge-primary">/components/Loader.jsx</span></h3>
+		<pre>
+			<code class="language-javascript-react">
+				import React from 'react';
+
+				const Loader = () =>{
+					return(
+						&lt;div className="text-center mx-auto py-5"&gt;
+							&lt;img src="/logo512.png" className="img-fluid loader" alt="loading..." /&gt;
+						&lt;/div&gt;
+					);
+				}
+
+				export default Loader;
+			</code>
+		</pre>
+
+		<br/>
+		<h3>We'll store our API Endpoints in a single file; <span class="badge badge-primary">/components/APIs.js</span></h3>
+		<pre>
+			<code class="language-javascript">
+				const baseURI = "https://michaelosoba.com/password-manager/api/credentials";
+
+				export const fetchCreds = baseURI;
+				export const getCred = `${baseURI}/`;
+				export const newCred = `${baseURI}/create`;
+				export const editCred = `${baseURI}/edit`;
+				export const deleteCred = `${baseURI}/delete/`;
+			</code>
+		</pre>
+
+		<br/>
+		<h3>A slight change to our <span class="badge badge-primary">App.css</span></h3>
+		<pre>
+			<code class="language-css">
+				html{
+					scrollbar-width: thin;
+					scrollbar-color: #282c34 #fff;
+					scroll-behavior: smooth;
+				}
+				
+				.loader{
+					width: 150px;
+					animation: rotate360 infinite 1.5s linear;
+					height: 40vmin;
+					pointer-events: none;
+				}
+				
+				
+				@keyframes rotate360 {
+					from {
+						transform: rotate(0deg);
+					}
+					to {
+						transform: rotate(360deg);
+					}
+				}
+			</code>
+		</pre>
+
+		<br/>
+		<h2>In the <span class="badge badge-primary">/Pages/Index/Index.jsx</span> file, type the following code Snippet: </h2>
+	
+		<pre>
+			<code class="language-javascript">
+				import React, { Component } from 'react';
+				import { Table } from 'react-bootstrap';
+				import { Link } from 'react-router-dom';
+
+				import { fetchCreds } from '../../components/APIs';
+				import DeleteCred from './sections/DeleteCred';
+
+				import Loader from '../../components/Loader';
+
+
+				class Index extends Component {
+					constructor(){
+						super();
+						this.state = {
+							credentials: [],
+							loading: true
+						}
+					}
+
+					fetchData = () =>{
+						fetch(fetchCreds)
+						.then(res => res.json())
+						.then(data =>{
+							if(data.status){
+								this.setState(()=>({ credentials: data.credentials, loading: false }));
+							}
+						})
+						.catch(err =>{
+							console.error(err);
+						})
+					}
+
+					componentDidMount(){
+						this.fetchData();
+					}
+
+					render() {
+						return (
+							&lt;div&gt;
+								&lt;div className="container"&gt;
+									&lt;Table striped hover borderless size="sm"&gt;
+										&lt;thead&gt;
+											&lt;tr&gt;
+												&lt;td>#&lt;/td&gt;
+												&lt;td>Platform&lt;/td&gt;
+												&lt;td>Username&lt;/td&gt;
+												&lt;td>Password&lt;/td&gt;
+												&lt;td>Actions&lt;/td&gt;
+											&lt;/tr&gt;
+										&lt;/thead&gt;
+										&lt;tbody&gt;
+											{this.state.credentials.map((cred, index) =>(
+												&lt;tr key={index}&gt;
+													&lt;td&gt; {++index} &lt;/td&gt;
+													&lt;td&gt; {cred.platform} &lt;/td&gt;
+													&lt;td&gt; {cred.username} &lt;/td&gt;
+													&lt;td&gt; {cred.password} &lt;/td&gt;
+													&lt;td&gt;
+														&lt;div className="btn-group"&gt;
+															&lt;Link to={`/edit/${cred.id}`} className="btn btn-info btn-sm">Edit&lt;/Link&gt;
+															&lt;DeleteCred platform={cred.platform} id={cred.id} refresh={this.fetchData} /&gt;
+														&lt;/div&gt;
+													&lt;/td&gt;
+												&lt;/tr&gt;
+											))}
+										&lt;/tbody&gt;
+									&lt;/Table&gt;
+									{this.state.loading ? &lt;Loader /&gt; : null}
+								&lt;/div&gt;
+							&lt;/div&gt;
+						);
+					}
+				}
+
+				export default Index;
+
+			</code>
+		</pre>
+
+		<br />
+		<h2>Next we have our <span class="badge badge-primary">Pages/Index/sections/DeleteCred.jsx</span> file, inject the following:</h2>
+
+		<pre>
+			<code class="language-js">
+				import React, { Component, Fragment } from 'react';
+				import { Modal } from 'react-bootstrap';
+				import { deleteCred } from '../../../components/APIs';
+
+				class DeleteCred extends Component {
+					constructor(){
+						super();
+						this.state = {
+							open: false,
+							id: 0,
+							platform: ''
+						}
+					}
+
+					handleOpen = () =>{
+						this.setState(()=>({ open: true }));
+					}
+
+					handleClose = () =>{
+						this.setState(()=>({ open: false }));
+					}
+
+					handleDelete = () =>{
+						fetch(`${deleteCred}${this.state.id}`, {
+							method: 'DELETE'
+						})
+						.then(res => res.json())
+						.then(data =>{
+							console.log(data);
+							if(data.status){
+								this.props.refresh();
+							}
+						})
+						.catch(err =>{
+							console.error(err);
+						})
+					}
+
+					componentDidMount(){
+						this.setState(()=>({
+							id: this.props.id,
+							platform: this.props.platform
+						}));
+					}
+
+					render() {
+						return (
+							&lt;Fragment&gt;
+								&lt;button className="btn btn-danger btn-sm" onClick={this.handleOpen}>Delete&lt;/button&gt;
+
+								&lt;Modal show={this.state.open} onHide={this.handleClose}&gt;
+									&lt;Modal.Header&gt;
+										&lt;Modal.Title&gt;Delete Credentials&lt;/Modal.Title&gt;
+									&lt;/Modal.Header&gt;
+									&lt;Modal.Body&gt;
+										&lt;p>Are you sure you want to delete your &lt;b className="text-muted"&gt;{this.state.platform}&lt;/b&gt; credentials&lt;/p&gt;
+									&lt;/Modal.Body&gt;
+									&lt;Modal.Footer&gt;
+										&lt;button className="btn btn-info" onClick={this.handleClose}>Cancel&lt;/button&gt;
+
+										&lt;button className="btn btn-danger" onClick={this.handleDelete}>Delete&lt;/button&gt;
+									&lt;/Modal.Footer&gt;
+								&lt;/Modal&gt;
+							&lt;/Fragment&gt;
+						)
+					}
+				}
+
+				export default DeleteCred;
+			</code>
+		</pre>
+
+		<h2>It is done!!!</h2>
+	</div>
+
+	<div class="mx-auto text-center mb-3">
+		<small>Made With ❤ by <a href="http://michaelosoba.com">Michael</a> ✌</small>
+	</div>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.0/prism.min.js"></script>
+</body>
+</html>
