@@ -1556,7 +1556,8 @@ body.modal{
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: center;
-	background-image: url("..//img/slider/1.jpg");
+	background-image: url("../img/4.jpg");
+	/* background-image: url("https://uploads-ssl.webflow.com/60ca4126d5e8d142115069ff/619551b1ec00d53a2761ff19_Web3_Stolen.jpeg"); */
 }
 .arlo_tm_hero .ripple:before{
 	position: absolute;
